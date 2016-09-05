@@ -1627,48 +1627,28 @@ NSInteger const kIQPreviousNextButtonToolbarTag     =   -1005;
 /**	Get all UITextField/UITextView siblings of textFieldView. */
 -(NSArray*)responderViews
 {
-    UIView *superConsideredView;
+    NSArray *textFields = [_textFieldView responderSiblings];
     
-    //If find any consider responderView in it's upper hierarchy then will get deepResponderView.
-    for (Class consideredClass in _toolbarPreviousNextAllowedClasses)
+    //Sorting textFields according to behaviour
+    switch (_toolbarManageBehaviour)
     {
-        superConsideredView = [_textFieldView superviewOfClassType:consideredClass];
-        
-        if (superConsideredView != nil)
+            //If autoToolbar behaviour is bySubviews, then returning it.
+        case IQAutoToolbarBySubviews:
+            return textFields;
             break;
-    }
-    
-    //If there is a superConsideredView in view's hierarchy, then fetching all it's subview that responds. No sorting for superConsideredView, it's by subView position.    (Enhancement ID: #22)
-    if (superConsideredView)
-    {
-        return [superConsideredView deepResponderViews];
-    }
-    //Otherwise fetching all the siblings
-    else
-    {
-        NSArray *textFields = [_textFieldView responderSiblings];
-        
-        //Sorting textFields according to behaviour
-        switch (_toolbarManageBehaviour)
-        {
-                //If autoToolbar behaviour is bySubviews, then returning it.
-            case IQAutoToolbarBySubviews:
-                return textFields;
-                break;
-                
-                //If autoToolbar behaviour is by tag, then sorting it according to tag property.
-            case IQAutoToolbarByTag:
-                return [textFields sortedArrayByTag];
-                break;
-                
-                //If autoToolbar behaviour is by tag, then sorting it according to tag property.
-            case IQAutoToolbarByPosition:
-                return [textFields sortedArrayByPosition];
-                break;
-            default:
-                return nil;
-                break;
-        }
+            
+            //If autoToolbar behaviour is by tag, then sorting it according to tag property.
+        case IQAutoToolbarByTag:
+            return [textFields sortedArrayByTag];
+            break;
+            
+            //If autoToolbar behaviour is by tag, then sorting it according to tag property.
+        case IQAutoToolbarByPosition:
+            return [textFields sortedArrayByPosition];
+            break;
+        default:
+            return nil;
+            break;
     }
 }
 
